@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Usage:
+#
+# 1. 复制该文件到要运行的主工程根目录的 .git/hooks 目录下
+# 2. 重命名该文件名为： post-checkout
+# 3. 给该文件增加执行权限： chmod +x .git/hooks/post-checkout
+# 4. 切换分支测试一下: git checkout other-barnch
+# 5. 当看到 "Development/api_mapping.json Updated!" 时，检查 development/api_mapping.json 是否确实更新了。
+#
+#
+# Notes:
+# 1. 初次运行，需要确保 development/api_mapping.json 里面的分支指向跟当前所在分支名保持一致, 因为该 hook 对 api_mapping.json 的修改依赖于此。
+
+# $6 is the branch your are currently on
+prev_barnch=$(git reflog | awk 'NR==1{ print $6 }')
+
+# $8 is the branch your are going to checkout
+next_branch=$(git reflog | awk 'NR==1{ print $8 }')
+
+echo "---------------------------------------"
+echo "Development/api_mapping.json Updated! "
+sed -i '' "s/$prev_barnch/$next_branch/g" .ones-config/development/api_mapping.json
+
